@@ -11,7 +11,9 @@ A directory of machine learning projects trained and deployed on Amazon SageMake
 
 # BERT NLP Model with Autopilot
 
-Bert-Based NLP Model for binary message classification using Amazon SageMaker Autopilot.
+Bert-Based NLP Model for sentiment classification using Amazon SageMaker Autopilot.
+
+Model will look at customer feedback and classify whether the feedback is positive (1), neutral (0), or negative (-1) sentiment.
 
 # Sentiment Analysis with BlazingText
 

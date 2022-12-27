@@ -3,6 +3,9 @@ A directory of machine learning projects trained and deployed on Amazon SageMake
 
 #### -- Project Status: [Active]
 
+# Table of Contents
+- [BERT-Based NLP Model for binary message classification using Amazon SageMaker Autopilot](#bert-autopilot)
+
 ## Description
 
 This module is designed to learn about Amazon SageMaker and train and deploy various machine learning models for different tasks. Current notebooks:

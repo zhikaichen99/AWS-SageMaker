@@ -4,7 +4,7 @@ A directory of machine learning projects trained and deployed on Amazon SageMake
 #### -- Project Status: [Active]
 
 # Table of Contents
-- [BERT-Based NLP Model using Amazon SageMaker Autopilot](##BERT-autopilot)
+- [BERT-Based NLP Model using Amazon SageMaker Autopilot](##BERT-Based-NLP-Model-using-Amazon-SageMaker-Autopilot)
 - [Sentiment analysis using Amazon SageMaker BlazingText built-in algorithm]()
 - [Text classification using RoBERTA and Pytorch on Amazon SageMaker]()
 - [Retail Sales Predicting using Amazon SageMaker built-in algorithm]()

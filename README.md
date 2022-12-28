@@ -4,16 +4,9 @@ A directory of machine learning projects trained and deployed on Amazon SageMake
 #### -- Project Status: [Active]
 
 # Table of Contents
-- [BERT NLP Model with Autopilot](#bert-nlp-model-with-autopilot)
 - [Sentiment analysis with BlazingText](#sentiment-analysis-with-blazingtext)
 - [Text classification with RoBERTA and Pytorch](#text-classification-with-roberta-and-pytorch)
 - [Retail sales prediction XGBoost](#retail-sales-prediction-xgboost)
-
-# BERT NLP Model with Autopilot
-
-Bert-Based NLP Model for sentiment classification using Amazon SageMaker Autopilot.
-
-Model will look at customer feedback and classify whether the feedback is positive (1), neutral (0), or negative (-1) sentiment.
 
 # Sentiment Analysis with BlazingText
 

@@ -10,7 +10,18 @@ A directory of machine learning projects trained and deployed on Amazon SageMake
 
 # Sentiment Analysis with BlazingText
 
-Sentiment analysis on customer reviews using Amazon SageMaker BlazingText built-in algorithm
+### Description
+
+Sentiment analysis on customer reviews using Amazon SageMaker BlazingText built-in algorithm.
+
+BlazingText is a variant of FastText which is based on word2vec.
+
+Model will look at customer feedback and classify whether the feedback is positive (1), neutral (0), or negative (-1) sentiment.
+
+### Dataset
+
+The dataset we are working with is the *Women's E-Commerce Clothing Reviews* dataset available on [Kaggle](https://www.kaggle.com/datasets/nicapotato/womens-ecommerce-clothing-reviews)
+
 
 # Text classification with RoBERTA and Pytorch
 

@@ -1,4 +1,5 @@
 from sklearn.model_selection import train_test_split
+from sklearn.utils import resample
 import functools
 import multiprocessing
 
@@ -18,11 +19,20 @@ import time
 import boto3
 import subprocess
 
+## PIP INSTALLS ##
+# This is 2.3.0 (vs. 2.3.1 everywhere else) because we need to
+# use anaconda and anaconda only supports 2.3.0 at this time
+#subprocess.check_call([sys.executable, "-m", "conda", "install", "-c", "anaconda", "tensorflow==2.3.0", "-y"])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow==2.3.1"])
 
 import tensorflow as tf
+from tensorflow import keras
 
+subprocess.check_call([sys.executable, "-m", "conda", "install", "-c", "conda-forge", "transformers==3.5.1", "-y"])
 from transformers import DistilBertTokenizer
+from transformers import DistilBertConfig
 
+#subprocess.check_call([sys.executable, "-m", "pip", "install", "sagemaker==2.24.1"])
 import pandas as pd
 import re
 

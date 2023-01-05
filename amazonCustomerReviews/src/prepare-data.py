@@ -19,6 +19,14 @@ tokenizer = RobertaTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME, do_lower_ca
 
 
 # Helper functions:
+
+# Convert object data types to string
+def object_to_string(dataframe):
+    for column in dataframe.columns:
+        if dataframe.dtypes[column] == 'object':
+            dataframe[column] = dataframe[column].astype('str').astype('string')
+    return dataframe
+
 # Convert star rating into sentiment. Function will be used in processing data
 def convert_to_sentiment(rating):
     if rating in {1,2}:
@@ -173,7 +181,24 @@ def process_data(file, balance_dataset, max_seq_length, feature_group_name):
     df_test_records = df_test[column_names]
     df_test_records['split_type'] = 'test'
 
-    # Add records to SageMaker Feature Store
+    df_train_records = object_to_string(df_train_records)
+    df_validation_records = object_to_string(df_validation_records)
+    df_test_records = object_to_string(df_test_records)
+
+    # Create the feature group
+    feature_group = create_feature_group(feature_group_name, prefix)
+
+    # Ingest data into SageMaker Feature Store
+    """
+    Ingestion is the act of populating feature groups in the feature store.
+    """
+
+    feature_group.ingest(data_frame = df_train_records, max_workers = 3, wait = True)
+    feature_group.ingest(data_frame = df_validation_records, max_workers = 3, wait = True)
+    feature_group.ingest(data_frame = df_test_records, max_workers = 3, wait = True)
+
+
+    
 
 
 

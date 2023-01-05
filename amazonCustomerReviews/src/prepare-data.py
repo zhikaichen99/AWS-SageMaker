@@ -1,8 +1,16 @@
 import pandas as pd
+import sagemaker
+import boto3
 
+from time import gmtime, strftime, sleep
+
+
+from sagemaker.session import Session
+from sagemaker.feature_store.feature_group import FeatureGroup
+from sagemaker.feature_store.feature_definition import FeatureDefinition, FeatureTypeEnum
 from sklearn.model_selection import train_test_split
-
 from transformers import RobertaTokenizer  # Import the tokenizer class
+
 
 PRE_TRAINED_MODEL_NAME = 'roberta-base'
 
@@ -20,6 +28,7 @@ def convert_to_sentiment(rating):
     if rating in {4,5}:
         return 1
 
+# Sentiment to label id
 def convert_sentiment_labelid(sentiment):
     if sentiment == -1:
         return 0
@@ -27,6 +36,55 @@ def convert_sentiment_labelid(sentiment):
         return 1
     if sentiment == 1:
         return 2
+
+def create_feature_group(feature_group_name, prefix):
+    """
+    A FeatureGroup is the main Feature Store resource that contains the metadata for all the data
+    stored in Amazon SageMaker Feature Store.
+    """
+
+    
+    """
+    A FeatureDefinition constists of a name and one of the following data types:
+    -Integral
+    -String
+    -Fraction
+    """
+
+    # Feature Definitions for the records
+    feature_definitions = [
+        FeatureDefinition(feature_name = 'review_id', feature_type = FeatureTypeEnum.STRING),
+        FeatureDefinition(feature_name = 'date', feature_type = FeatureTypeEnum.STRING),
+        FeatureDefinition(feature_name = 'sentiment', feature_type = FeatureTypeEnum.STRING),
+        FeatureDefinition(feature_name = 'label_ids', feature_type = FeatureTypeEnum.STRING), 
+        FeatureDefinition(feature_name = 'input_ids', feature_type = FeatureTypeEnum.STRING),
+        FeatureDefinition(feature_name = 'review_body', feature_type = FeatureTypeEnum.STRING),
+        FeatureDefinition(feature_name = 'split_type', feature_type = FeatureTypeEnum.STRING)
+    ]
+
+    # Feature Group
+    feature_group = FeatureGroup(
+        name = feature_group_name,
+        feature_definitions = feature_definitions,
+        sagemaker_session = sagemaker_session
+    )
+
+
+    record_identifier_name = 'review_id'
+    event_time_feature_name = 'date'
+
+    # Create Feature Group
+    feature_group.create(
+        s3_uri = f's3://{bucket}/{prefix}',
+        record_identifier_name = record_identifier_name,
+        event_time_feature_name = event_time_feature_name,
+        role_arn = role,
+        enable_online_store = False
+    )
+
+    return feature_group
+
+
 
 # Function to convert text to required formatting
 def convert_to_bert_format(text, max_seq_length):
@@ -48,7 +106,8 @@ def convert_to_bert_format(text, max_seq_length):
     )
     return encode_plus['input_ids'].flatten().tolist()
 
-def process_data(file, balance_dataset, max_seq_length, prefix, feature_group_name):
+
+def process_data(file, balance_dataset, max_seq_length, feature_group_name):
     df = pd.read_csv(file, index_col = 0)
 
     # remove null values in dataset
@@ -80,6 +139,10 @@ def process_data(file, balance_dataset, max_seq_length, prefix, feature_group_na
         df_balanced = df_unbalanced_grouped_by.apply(lambda x: x.sample(df_unbalanced_grouped_by.size().min()).reset_index(drop = True))
 
         df = df_balanced
+
+    # Adding date feature into column to keep track of the data
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+    df['date'] = timestamp
     
     # Split data into train, test, and validation set
 
@@ -94,7 +157,25 @@ def process_data(file, balance_dataset, max_seq_length, prefix, feature_group_na
     df_test = df_test.reset_index(drop = True)
 
     # write data to tsv file
-    
+    output_file_path = 'processing/output/sentiment'
+    df_train.to_csv('../data/{}/train/training_data_processed.tsv'.format(output_file_path))
+    df_validation.to_csv('../data/{}/validation/validation_data_processed.tsv'.format(output_file_path))
+    df_test.to_csv('../data/{}/test/test_data_processed.tsv'.format(output_file_path))
+
+    column_names = ['review_id', 'sentiment', 'date', 'label_ids', 'input_ids', 'review_body']
+
+    df_train_records = df_train[column_names]
+    df_train_records['split_type'] = 'train'
+
+    df_validation_records = df_validation[column_names]
+    df_validation_records['split_type'] = 'validation'
+
+    df_test_records = df_test[column_names]
+    df_test_records['split_type'] = 'test'
+
+    # Add records to SageMaker Feature Store
+
+
 
 
 
